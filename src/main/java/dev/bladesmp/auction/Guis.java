@@ -123,8 +123,9 @@ public class Guis implements Listener {
         inv.setItem(47, item(Material.HOPPER, 0, "&bSort: &f" + sortName(sort),
                 "&7Click to change the order"));
         inv.setItem(48, item(Material.ENDER_CHEST, 0, "&d&lQuick Buy",
-                "&7Browse everything for sale",
-                "&7by item — cheapest first!",
+                "&7Save your favorite items on",
+                "&7the panes — then one click",
+                "&7buys the cheapest &finstantly&7!",
                 "", "&eClick &7to open"));
         inv.setItem(49, item(Material.ANVIL, 0, "&6Refresh",
                 "&7Click to load the newest auctions"));
@@ -179,7 +180,10 @@ public class Guis implements Listener {
         return pretty.toString().trim();
     }
 
-    // ===== quick buy: every item type for sale, cheapest first =====
+    // ===== quick buy: your own grid of saved items =====
+    // Gray panes = empty slots. Pick up an item from your inventory and
+    // click a pane to save it there. Clicking a saved item instantly
+    // buys the cheapest auction of that item.
 
     public void openQuick(Player player) {
         QuickHolder holder = new QuickHolder();
@@ -187,43 +191,58 @@ public class Guis implements Listener {
                 plugin.getConfig().getString("gui.quick-title", "&8Quick Buy")));
         holder.inv = inv;
 
-        // count listings + find the cheapest price for each item type
-        Map<Material, Integer> counts = new LinkedHashMap<Material, Integer>();
-        Map<Material, Double> cheapest = new HashMap<Material, Double>();
-        for (Listing l : plugin.getListings().sorted(Listings.SORT_CHEAP)) {
-            Material type = l.item.getType();
-            Integer c = counts.get(type);
-            counts.put(type, c == null ? 1 : c + 1);
-            if (!cheapest.containsKey(type)) cheapest.put(type, l.price);
-        }
-
-        int slot = 0;
-        for (Map.Entry<Material, Integer> entry : counts.entrySet()) {
-            if (slot >= 45) break;
-            Material type = entry.getKey();
-            ItemStack icon = new ItemStack(type, 1);
-            ItemMeta meta = icon.getItemMeta();
-            meta.setDisplayName(plugin.color("&e" + prettyName(type)));
-            meta.setLore(Arrays.asList(
-                    plugin.color("&7For sale: &f" + entry.getValue()),
-                    plugin.color("&7Cheapest: &a" + plugin.getEconomy().format(cheapest.get(type))),
-                    "",
-                    plugin.color("&eClick &7to see them, cheapest first")));
-            icon.setItemMeta(meta);
-            inv.setItem(slot, icon);
-            holder.slots.put(slot, type);
-            slot++;
-        }
-        if (slot == 0) {
-            inv.setItem(22, item(Material.BARRIER, 0, "&cNothing for sale yet!",
-                    "&7Hold an item and type", "&e/ah sell <price>"));
+        Map<Integer, Material> saved = plugin.getListings().quickSlots(player.getUniqueId());
+        for (int slot = 0; slot < 45; slot++) {
+            Material type = saved.get(slot);
+            if (type == null) {
+                inv.setItem(slot, emptyQuickSlot());
+            } else {
+                inv.setItem(slot, quickIcon(type));
+                holder.slots.put(slot, type);
+            }
         }
 
         ItemStack pane = item(Material.STAINED_GLASS_PANE, 7, "&7");
         for (int i = 45; i < 54; i++) inv.setItem(i, pane);
+        inv.setItem(48, item(Material.BOOK, 0, "&6How Quick Buy works",
+                "&71. Pick up an item from your",
+                "&7   inventory (just click it)",
+                "&72. Click a gray pane to save it",
+                "&73. From then on, clicking it",
+                "&7   buys the cheapest one &finstantly",
+                "",
+                "&cRight-click &7a saved item to remove it"));
         inv.setItem(49, item(Material.ARROW, 0, "&e◀ Back to Auction House"));
 
         player.openInventory(inv);
+    }
+
+    private ItemStack emptyQuickSlot() {
+        return item(Material.STAINED_GLASS_PANE, 7, "&7Empty Quick Buy Slot",
+                "&7Pick up an item from your",
+                "&7inventory and click here",
+                "&7to save it in this slot.");
+    }
+
+    private ItemStack quickIcon(Material type) {
+        List<Listing> matches = visible(Listings.SORT_CHEAP, null, type);
+        ItemStack icon = new ItemStack(type, 1);
+        ItemMeta meta = icon.getItemMeta();
+        meta.setDisplayName(plugin.color("&e" + prettyName(type)));
+        List<String> lore = new ArrayList<String>();
+        if (matches.isEmpty()) {
+            lore.add(plugin.color("&cNone for sale right now"));
+        } else {
+            lore.add(plugin.color("&7Cheapest: &a"
+                    + plugin.getEconomy().format(matches.get(0).price)));
+            lore.add(plugin.color("&7For sale: &f" + matches.size()));
+        }
+        lore.add("");
+        lore.add(plugin.color("&aClick &7= buy the cheapest &finstantly"));
+        lore.add(plugin.color("&cRight-Click &7= remove from Quick Buy"));
+        meta.setLore(lore);
+        icon.setItemMeta(meta);
+        return icon;
     }
 
     private String sortName(int sort) {
@@ -399,7 +418,7 @@ public class Guis implements Listener {
                     return;
                 }
                 if (event.isShiftClick()) {
-                    buy(player, id, ah.page, ah.sort, ah.search, ah.filter); // instant!
+                    buy(player, id, ah.page, ah.sort, ah.search, ah.filter, false); // instant!
                 } else {
                     openConfirm(player, l, ah);
                 }
@@ -429,18 +448,59 @@ public class Guis implements Listener {
         }
 
         if (holder instanceof QuickHolder) {
-            event.setCancelled(true);
             QuickHolder quick = (QuickHolder) holder;
             int slot = event.getRawSlot();
+
+            // clicks in the player's own inventory are allowed, so they can
+            // pick an item up onto the cursor (but no shift-moving into here)
+            if (slot >= 54) {
+                if (event.isShiftClick()) event.setCancelled(true);
+                return;
+            }
+            event.setCancelled(true);
+            if (slot < 0) return;
+
             if (slot == 49) {
                 openAh(player, 0, Listings.SORT_NEWEST);
                 return;
             }
-            Material type = quick.slots.get(slot);
-            if (type != null) {
-                // show just this item, cheapest first
-                openAh(player, 0, Listings.SORT_CHEAP, null, type);
+            if (slot >= 45) return; // the info book / bottom panes
+
+            ItemStack cursor = event.getCursor();
+            if (cursor != null && cursor.getType() != Material.AIR) {
+                // holding an item -> save its type in this slot (item is kept!)
+                Material type = cursor.getType();
+                plugin.getListings().setQuickSlot(player.getUniqueId(), slot, type);
+                quick.slots.put(slot, type);
+                event.getInventory().setItem(slot, quickIcon(type));
+                player.sendMessage(plugin.msg("quick-saved")
+                        .replace("%item%", prettyName(type)));
+                plugin.sound(player, Sound.NOTE_PLING);
+                return;
             }
+
+            Material type = quick.slots.get(slot);
+            if (type == null) return; // empty pane, empty hand
+
+            if (event.isRightClick()) {
+                // remove the saved item from this slot
+                plugin.getListings().setQuickSlot(player.getUniqueId(), slot, null);
+                quick.slots.remove(slot);
+                event.getInventory().setItem(slot, emptyQuickSlot());
+                plugin.sound(player, Sound.CLICK);
+                return;
+            }
+
+            // buy the cheapest one of this item, instantly
+            List<Listing> matches = visible(Listings.SORT_CHEAP, null, type);
+            if (matches.isEmpty()) {
+                player.sendMessage(plugin.msg("quick-none")
+                        .replace("%item%", prettyName(type)));
+                plugin.sound(player, Sound.VILLAGER_NO);
+                event.getInventory().setItem(slot, quickIcon(type));
+                return;
+            }
+            buy(player, matches.get(0).id, 0, Listings.SORT_NEWEST, null, null, true);
             return;
         }
 
@@ -450,7 +510,7 @@ public class Guis implements Listener {
             int slot = event.getRawSlot();
             if (slot == 11) {
                 buy(player, confirm.listingId, confirm.page, confirm.sort,
-                        confirm.search, confirm.filter);
+                        confirm.search, confirm.filter, false);
             } else if (slot == 15) {
                 openAh(player, confirm.page, confirm.sort, confirm.search, confirm.filter);
             }
@@ -587,13 +647,14 @@ public class Guis implements Listener {
         player.closeInventory(); // returns whatever could not be sold
     }
 
-    /** The actual purchase — used by instant buy and the confirm button. */
+    /** The actual purchase — used by instant buy, Quick Buy, and confirm. */
     private void buy(Player buyer, UUID listingId, int page, int sort,
-                     String search, Material filter) {
+                     String search, Material filter, boolean fromQuick) {
         Listing l = plugin.getListings().get(listingId);
         if (l == null) {
             buyer.sendMessage(plugin.msg("already-sold"));
-            openAh(buyer, page, sort, search, filter);
+            if (fromQuick) openQuick(buyer);
+            else openAh(buyer, page, sort, search, filter);
             return;
         }
         if (l.seller.equals(buyer.getUniqueId())) {
@@ -627,8 +688,9 @@ public class Guis implements Listener {
                     .replace("%player%", buyer.getName()));
             plugin.sound(seller, Sound.ORB_PICKUP);
         }
-        // back to the same page / search / quick-buy view they were on
-        openAh(buyer, page, sort, search, filter);
+        // back to where they were: the Quick Buy grid, or the same AH view
+        if (fromQuick) openQuick(buyer);
+        else openAh(buyer, page, sort, search, filter);
     }
 
     // ===== little helpers =====

@@ -73,6 +73,8 @@ messages:
   prefix: "&6&lAH &8» &f"
   ah-sell-usage: "&cUse: /ah sell <price>  (like /ah sell 5k)"
   search-hint: "&fType &e/ah <item name> &fto search — like &e/ah diamond"
+  quick-saved: "&aSaved! &fClicking &e%item% &fin Quick Buy now buys the cheapest one instantly."
+  quick-none: "&cNobody is selling %item% right now."
   hold-something: "&cHold the item you mean first!"
   bad-price: "&cThat price doesn't work. Try something like 500 or 5k."
   too-many-listings: "&cYou already have %max% things for sale. Wait for them to sell!"

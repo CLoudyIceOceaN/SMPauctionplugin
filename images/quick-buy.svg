@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="380" viewBox="0 0 500 380" font-family="Menlo, Consolas, monospace">
+  <defs>
+    <g id="slot">
+      <rect width="44" height="44" rx="3" fill="#26282e"/>
+      <rect x="2" y="2" width="40" height="40" rx="2" fill="#33363e"/>
+    </g>
+    <g id="graypane">
+      <rect width="44" height="44" rx="3" fill="#26282e"/>
+      <rect x="2" y="2" width="40" height="40" rx="2" fill="#33363e"/>
+      <rect x="10" y="10" width="24" height="24" rx="3" fill="#6f7480" opacity="0.85"/>
+      <rect x="14" y="14" width="16" height="16" rx="2" fill="#8b909c" opacity="0.6"/>
+    </g>
+  </defs>
+
+  <rect width="500" height="380" fill="#14161c"/>
+  <rect x="14" y="12" width="472" height="356" rx="10" fill="#3b3e46" stroke="#20222a" stroke-width="2"/>
+  <text x="28" y="40" font-size="15" font-weight="bold" fill="#e8e8e8">Quick Buy</text>
+
+  <!-- rows of gray panes (empty quick buy slots) -->
+  <use href="#graypane" x="122" y="52"/><use href="#graypane" x="170" y="52"/><use href="#graypane" x="218" y="52"/><use href="#graypane" x="266" y="52"/><use href="#graypane" x="314" y="52"/><use href="#graypane" x="362" y="52"/><use href="#graypane" x="410" y="52"/>
+  <use href="#graypane" x="26" y="100"/><use href="#graypane" x="74" y="100"/><use href="#graypane" x="122" y="100"/><use href="#graypane" x="170" y="100"/><use href="#graypane" x="218" y="100"/><use href="#graypane" x="266" y="100"/><use href="#graypane" x="314" y="100"/><use href="#graypane" x="362" y="100"/><use href="#graypane" x="410" y="100"/>
+  <use href="#graypane" x="26" y="148"/><use href="#graypane" x="74" y="148"/><use href="#graypane" x="122" y="148"/><use href="#graypane" x="170" y="148"/><use href="#graypane" x="218" y="148"/><use href="#graypane" x="266" y="148"/><use href="#graypane" x="314" y="148"/><use href="#graypane" x="362" y="148"/><use href="#graypane" x="410" y="148"/>
+  <use href="#graypane" x="26" y="196"/><use href="#graypane" x="74" y="196"/><use href="#graypane" x="122" y="196"/><use href="#graypane" x="170" y="196"/><use href="#graypane" x="218" y="196"/><use href="#graypane" x="266" y="196"/><use href="#graypane" x="314" y="196"/><use href="#graypane" x="362" y="196"/><use href="#graypane" x="410" y="196"/>
+  <use href="#graypane" x="26" y="244"/><use href="#graypane" x="74" y="244"/><use href="#graypane" x="122" y="244"/><use href="#graypane" x="170" y="244"/><use href="#graypane" x="218" y="244"/><use href="#graypane" x="266" y="244"/><use href="#graypane" x="314" y="244"/><use href="#graypane" x="362" y="244"/><use href="#graypane" x="410" y="244"/>
+
+  <!-- two slots the player already saved -->
+  <g> <!-- gem shortcut -->
+    <use href="#slot" x="26" y="52"/>
+    <polygon points="38,66 48,60 58,66 48,84" fill="#4dd7e6" stroke="#2ba6b5" stroke-width="1.5"/>
+  </g>
+  <g> <!-- gold bars shortcut (being hovered) -->
+    <use href="#slot" x="74" y="52"/>
+    <rect x="84" y="66" width="24" height="7" rx="3" fill="#ffd964"/>
+    <rect x="88" y="76" width="24" height="7" rx="3" fill="#eec44f"/>
+  </g>
+
+  <!-- cursor on the gold bars -->
+  <polygon points="102,80 102,100 107,95 111,103 115,101 111,93 118,93" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+
+  <!-- tooltip -->
+  <g>
+    <rect x="110" y="96" width="270" height="118" rx="6" fill="#160d24" opacity="0.97" stroke="#7a4fd0" stroke-width="2"/>
+    <text x="124" y="120" font-size="13" font-weight="bold" fill="#ffe259">Gold Ingot</text>
+    <text x="124" y="141" font-size="12" fill="#aaaaaa">Cheapest: <tspan fill="#55ff55">$2,500</tspan></text>
+    <text x="124" y="159" font-size="12" fill="#aaaaaa">For sale: <tspan fill="#ffffff">14</tspan></text>
+    <text x="124" y="183" font-size="12" fill="#55ff55">Click <tspan fill="#aaaaaa">= buy the cheapest instantly</tspan></text>
+    <text x="124" y="201" font-size="12" fill="#ff7a7a">Right-Click <tspan fill="#aaaaaa">= remove from Quick Buy</tspan></text>
+  </g>
+
+  <!-- bottom bar -->
+  <use href="#graypane" x="26" y="292"/><use href="#graypane" x="74" y="292"/><use href="#graypane" x="122" y="292"/>
+  <g> <!-- how-to book -->
+    <use href="#slot" x="170" y="292"/>
+    <rect x="182" y="302" width="20" height="24" rx="2" fill="#a5652c"/>
+    <rect x="186" y="306" width="12" height="2.5" fill="#e8d9b8"/>
+    <rect x="186" y="311" width="12" height="2.5" fill="#e8d9b8"/>
+    <rect x="186" y="316" width="12" height="2.5" fill="#e8d9b8"/>
+  </g>
+  <g> <!-- back arrow -->
+    <use href="#slot" x="218" y="292"/>
+    <polygon points="250,300 234,314 250,328" fill="#ffe259"/>
+  </g>
+  <use href="#graypane" x="266" y="292"/><use href="#graypane" x="314" y="292"/><use href="#graypane" x="362" y="292"/><use href="#graypane" x="410" y="292"/>
+
+  <text x="240" y="352" font-size="9" fill="#9aa0ac" text-anchor="middle">back to auction house</text>
+</svg>

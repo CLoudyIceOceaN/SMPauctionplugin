@@ -53,9 +53,7 @@ Buying:
 
 The bottom bar (left to right):
 - **Hopper** — sort: newest / cheapest / priciest
-- **Ender chest** — **Quick Buy**: every item type for sale in one menu,
-  with how many there are and the cheapest price. Click one to see all
-  of them, cheapest first — perfect for grabbing the best deal fast
+- **Ender chest** — **Quick Buy** (see below)
 - **Anvil** — refresh, loads the newest auctions
 - **Sign** — search (it tells you to type `/ah <item name>`; when a
   search is on, click the sign again to clear it)
@@ -65,6 +63,22 @@ The bottom bar (left to right):
   when you're past page 1)
 
 Sellers get paid instantly, even if they're offline.
+
+### ⚡ Quick Buy (the ender chest)
+
+Quick Buy is your own page of shortcuts — a grid of gray glass panes:
+
+1. Pick up an item from your inventory (just click it, so it's on
+   your cursor)
+2. Click any gray pane — the item is **saved** there (you keep the item!)
+3. From then on, **clicking that saved item buys the cheapest one on the
+   auction house instantly** — no confirm screen, no searching
+
+Each saved item shows the current cheapest price and how many are for
+sale. **Right-click** a saved item to remove it. Your Quick Buy page is
+remembered forever, even after restarts.
+
+![Quick Buy](images/quick-buy.svg)
 
 ## The sell menu — `/sell`
 

@@ -54,6 +54,9 @@ public class Listings {
     private final Map<UUID, Listing> active = new LinkedHashMap<UUID, Listing>();
     // Items waiting to go back to a player (expired or cancelled listings)
     private final Map<UUID, List<ItemStack>> claims = new HashMap<UUID, List<ItemStack>>();
+    // Each player's saved Quick Buy slots: slot number -> item type
+    private final Map<UUID, Map<Integer, org.bukkit.Material>> quick =
+            new HashMap<UUID, Map<Integer, org.bukkit.Material>>();
 
     public Listings(AuctionPlugin plugin) {
         this.plugin = plugin;
@@ -80,6 +83,23 @@ public class Listings {
                     if (listing.item != null) active.put(listing.id, listing);
                 } catch (Exception e) {
                     plugin.getLogger().warning("Skipped a broken listing: " + key);
+                }
+            }
+        }
+        ConfigurationSection quickSec = yaml.getConfigurationSection("quickbuy");
+        if (quickSec != null) {
+            for (String key : quickSec.getKeys(false)) {
+                try {
+                    UUID id = UUID.fromString(key);
+                    Map<Integer, org.bukkit.Material> slots =
+                            new HashMap<Integer, org.bukkit.Material>();
+                    ConfigurationSection s = quickSec.getConfigurationSection(key);
+                    for (String slot : s.getKeys(false)) {
+                        org.bukkit.Material type = org.bukkit.Material.matchMaterial(s.getString(slot, ""));
+                        if (type != null) slots.put(Integer.parseInt(slot), type);
+                    }
+                    if (!slots.isEmpty()) quick.put(id, slots);
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -111,6 +131,12 @@ public class Listings {
         }
         for (Map.Entry<UUID, List<ItemStack>> entry : claims.entrySet()) {
             yaml.set("claims." + entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<UUID, Map<Integer, org.bukkit.Material>> entry : quick.entrySet()) {
+            for (Map.Entry<Integer, org.bukkit.Material> slot : entry.getValue().entrySet()) {
+                yaml.set("quickbuy." + entry.getKey() + "." + slot.getKey(),
+                        slot.getValue().name());
+            }
         }
         try {
             yaml.save(file);
@@ -194,6 +220,26 @@ public class Listings {
         ItemStack item = list.remove(index);
         if (list.isEmpty()) claims.remove(player);
         return item;
+    }
+
+    // ----- quick buy slots -----
+
+    public Map<Integer, org.bukkit.Material> quickSlots(UUID player) {
+        Map<Integer, org.bukkit.Material> slots = quick.get(player);
+        if (slots == null) {
+            slots = new HashMap<Integer, org.bukkit.Material>();
+            quick.put(player, slots);
+        }
+        return slots;
+    }
+
+    public void setQuickSlot(UUID player, int slot, org.bukkit.Material type) {
+        if (type == null) {
+            quickSlots(player).remove(slot);
+        } else {
+            quickSlots(player).put(slot, type);
+        }
+        save();
     }
 
     /** Moves anything past its end time into the seller's claim box. */
