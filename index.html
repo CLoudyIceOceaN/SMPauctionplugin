@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SMPauctionplugin</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(180deg, #10131c 0%, #1a0f1c 100%);
+    color: #f2f2f2; min-height: 100vh; padding: 48px 16px;
+    display: flex; justify-content: center;
+  }
+  .wrap { max-width: 560px; width: 100%; }
+  h1 { font-size: 2rem; margin-bottom: 4px; }
+  h1 span { color: #d07cff; }
+  .sub { color: #b9b9b9; margin-bottom: 28px; }
+  .btn {
+    display: block; text-align: center; text-decoration: none;
+    background: #d07cff; color: #1a0f1c; font-weight: 800; font-size: 1.25rem;
+    padding: 18px; border-radius: 14px; margin-bottom: 10px;
+  }
+  .btn:hover { background: #de9dff; }
+  .tiny { text-align: center; color: #8b8b8b; font-size: .85rem; margin-bottom: 32px; }
+  .card {
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 14px; padding: 20px 22px; margin-bottom: 16px;
+  }
+  .card h2 { font-size: 1.05rem; color: #d07cff; margin-bottom: 10px; }
+  ol, ul { padding-left: 22px; display: grid; gap: 8px; }
+  code {
+    background: rgba(255,255,255,.12); padding: 2px 7px; border-radius: 6px;
+    font-family: ui-monospace, Menlo, monospace; font-size: .9em;
+  }
+  .cmdrow { display: flex; gap: 8px; margin: 10px 0 8px; }
+  .cmd {
+    flex: 1; background: #0b0e15; border: 1px solid rgba(255,255,255,.15);
+    border-radius: 10px; padding: 12px 14px; overflow-x: auto; white-space: nowrap;
+    font-family: ui-monospace, Menlo, monospace; font-size: .85rem; color: #7fe07f;
+  }
+  .copy {
+    background: rgba(255,255,255,.12); color: #f2f2f2; border: 0;
+    border-radius: 10px; padding: 0 16px; font-weight: 700; cursor: pointer;
+    font-size: .9rem;
+  }
+  .copy:hover { background: rgba(255,255,255,.2); }
+  .note { color: #b9b9b9; font-size: .9rem; }
+  a.plain { color: #de9dff; }
+  footer { text-align: center; color: #777; font-size: .85rem; margin-top: 28px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><span>SMP</span>auctionplugin</h1>
+  <p class="sub">Sell menu + auction house with quick buy, DonutSMP-style —
+  for BladeSMP (Eaglercraft 1.8 / Spigot 1.8.8).</p>
+
+  <a class="btn" href="SMPauctionplugin.jar" download>&#11015;&#65039; Download SMPauctionplugin.jar</a>
+  <p class="tiny">version 1.0 &middot; needs SMPmoneyplugin (the installer grabs it for you)</p>
+
+  <div class="card">
+    <h2>&#9889; Fastest way: one command</h2>
+    <p class="note">Open the terminal in your Codespace, <code>cd</code> into
+    your server folder, and paste this. It installs the auction house
+    <b>and</b> the money plugin if it's missing:</p>
+    <div class="cmdrow">
+      <div class="cmd" id="cmd">curl -sL https://cloudyiceocean.github.io/SMPauctionplugin/install.sh | bash</div>
+      <button class="copy" onclick="navigator.clipboard.writeText(document.getElementById('cmd').textContent).then(()=>{this.textContent='&#10003;';setTimeout(()=>this.textContent='Copy',1200)})">Copy</button>
+    </div>
+    <p class="note">Then restart the server. Done!</p>
+  </div>
+
+  <div class="card">
+    <h2>Auction house — <code>/ah</code></h2>
+    <ul>
+      <li><code>/ah sell 5k</code> — sell the item in your hand for $5,000</li>
+      <li><b>Click</b> an item = confirm screen &middot; <b>Shift-click</b> = &#9889; quick buy</li>
+      <li>Pages, sorting (newest / cheapest / priciest), and <b>Your Listings</b>
+        to cancel sales or claim expired items</li>
+      <li>Sellers get paid instantly, even offline</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Sell menu — <code>/sell</code></h2>
+    <ul>
+      <li>Drop your loot in, the green button shows the total, press it — paid!</li>
+      <li>Renamed or enchanted items are never sold by accident</li>
+      <li><code>/worth</code> shows what the item in your hand pays</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Change prices &amp; settings</h2>
+    <p class="note">Edit <code>plugins/SMPauctionplugin/config.yml</code> on your
+    server — every sell price, auction length, listing limit, menu title, and
+    message is in there — then restart.</p>
+  </div>
+
+  <footer>Source code &amp; help: <a class="plain" href="https://github.com/CLoudyIceOceaN/SMPauctionplugin">github.com/CLoudyIceOceaN/SMPauctionplugin</a></footer>
+</div>
+</body>
+</html>

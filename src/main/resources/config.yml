@@ -1,0 +1,90 @@
+# ==================================================
+#  SMPauctionplugin - sell menu + auction house
+#  Change anything, then restart the server.
+#  Colors use & codes: &6 gold, &a green, &f white,
+#  &e yellow, &7 gray, &c red, &l bold.
+# ==================================================
+
+# Auction house rules
+listing:
+  # How long an item stays for sale before it expires (hours)
+  duration-hours: 48
+  # How many things one player can sell at the same time
+  max-per-player: 10
+  # Fee for listing an item, as a percent of the price (0 = free)
+  fee-percent: 0
+  # Cheapest and most expensive price allowed
+  min-price: 1
+  max-price: 1000000000000
+
+# Menu titles (keep them short, max 32 letters)
+gui:
+  ah-title: "&8Auction House"
+  confirm-title: "&8Confirm Purchase"
+  mine-title: "&8Your Listings"
+  sell-title: "&8Sell Items"
+
+# What the /sell menu pays for each item (per single item).
+# These are 1.8 item names! Some are weird:
+#   SULPHUR = gunpowder, PORK = raw porkchop, CARROT_ITEM = carrot,
+#   POTATO_ITEM = potato, NETHER_STALK = nether wart, RAW_FISH = fish
+# Add more lines for more items. Items not in this list can't be sold.
+sell-prices:
+  SUGAR_CANE: 2
+  CACTUS: 2
+  WHEAT: 3
+  SEEDS: 1
+  CARROT_ITEM: 3
+  POTATO_ITEM: 3
+  MELON: 2
+  PUMPKIN: 4
+  NETHER_STALK: 3
+  ROTTEN_FLESH: 2
+  BONE: 3
+  STRING: 3
+  SPIDER_EYE: 3
+  SULPHUR: 5
+  ARROW: 1
+  FEATHER: 2
+  LEATHER: 4
+  PORK: 4
+  RAW_BEEF: 4
+  RAW_CHICKEN: 3
+  RAW_FISH: 4
+  EGG: 2
+  COBBLESTONE: 1
+  STONE: 1
+  SAND: 1
+  COAL: 8
+  REDSTONE: 4
+  IRON_INGOT: 12
+  GOLD_INGOT: 18
+  DIAMOND: 100
+  EMERALD: 60
+  OBSIDIAN: 20
+  ENDER_PEARL: 25
+  BLAZE_ROD: 20
+  GHAST_TEAR: 40
+  SLIME_BALL: 10
+
+# Chat messages
+messages:
+  prefix: "&6&lAH &8» &f"
+  ah-sell-usage: "&cUse: /ah sell <price>  (like /ah sell 5k)"
+  hold-something: "&cHold the item you mean first!"
+  bad-price: "&cThat price doesn't work. Try something like 500 or 5k."
+  too-many-listings: "&cYou already have %max% things for sale. Wait for them to sell!"
+  cant-pay-fee: "&cYou need %fee% to pay the listing fee."
+  listed: "&fYour &e%item% &fis now for sale for &a%amount%&f!"
+  bought: "&fYou bought &e%item% &ffor &a%amount%&f!"
+  your-item-sold: "&e%player% &fbought your &e%item% &ffor &a%amount%&f!"
+  already-sold: "&cToo slow — someone already bought that!"
+  own-listing: "&cThat's your own item! Cancel it in Your Listings instead."
+  not-enough: "&cYou don't have enough money!"
+  cancelled: "&fTook &e%item% &foff sale. Claim it in Your Listings."
+  expired: "&fYour &e%item% &fexpired. Claim it back in &e/ah &f→ Your Listings."
+  inventory-full: "&cYour inventory is full — the item is waiting in Your Listings."
+  sold: "&fSold &e%stacks% &fstack(s) for &a%amount%&f!"
+  nothing-sellable: "&cNothing in here can be sold. Type /worth while holding an item to check prices."
+  worth: "&e%item% &fsells for &a%each% &feach &7(&a%stack% &7for this stack)."
+  worth-nothing: "&e%item% &ccan't be sold in /sell."

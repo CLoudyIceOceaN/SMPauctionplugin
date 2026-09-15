@@ -1,0 +1,18 @@
+name: SMPauctionplugin
+main: dev.bladesmp.auction.AuctionPlugin
+version: "1.0"
+author: Colin Ang
+description: DonutSMP-style sell menu and auction house for BladeSMP.
+depend: [SMPmoneyplugin]
+
+commands:
+  ah:
+    description: Open the auction house, or sell the item in your hand
+    usage: /ah [sell <price>]
+    aliases: [auctionhouse, auctions, auction]
+  sell:
+    description: Open the sell menu
+    usage: /sell
+  worth:
+    description: See what the item in your hand sells for
+    usage: /worth
