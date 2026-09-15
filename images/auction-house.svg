@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="380" viewBox="0 0 500 380" font-family="Menlo, Consolas, monospace">
+  <defs>
+    <g id="slot">
+      <rect width="44" height="44" rx="3" fill="#26282e"/>
+      <rect x="2" y="2" width="40" height="40" rx="2" fill="#33363e"/>
+    </g>
+    <g id="graypane">
+      <rect width="44" height="44" rx="3" fill="#26282e"/>
+      <rect x="2" y="2" width="40" height="40" rx="2" fill="#33363e"/>
+      <rect x="10" y="10" width="24" height="24" rx="3" fill="#6f7480" opacity="0.85"/>
+      <rect x="14" y="14" width="16" height="16" rx="2" fill="#8b909c" opacity="0.6"/>
+    </g>
+    <g id="gem">
+      <polygon points="10,8 20,2 30,8 20,26" fill="#4dd7e6" stroke="#2ba6b5" stroke-width="1.5"/>
+    </g>
+  </defs>
+
+  <rect width="500" height="380" fill="#14161c"/>
+  <rect x="14" y="12" width="472" height="356" rx="10" fill="#3b3e46" stroke="#20222a" stroke-width="2"/>
+  <text x="28" y="40" font-size="15" font-weight="bold" fill="#e8e8e8">Auction House (1/3)</text>
+
+  <!-- 5 rows of listing slots -->
+  <use href="#slot" x="26" y="52"/><use href="#slot" x="74" y="52"/><use href="#slot" x="122" y="52"/><use href="#slot" x="170" y="52"/><use href="#slot" x="218" y="52"/><use href="#slot" x="266" y="52"/><use href="#slot" x="314" y="52"/><use href="#slot" x="362" y="52"/><use href="#slot" x="410" y="52"/>
+  <use href="#slot" x="26" y="100"/><use href="#slot" x="74" y="100"/><use href="#slot" x="122" y="100"/><use href="#slot" x="170" y="100"/><use href="#slot" x="218" y="100"/><use href="#slot" x="266" y="100"/><use href="#slot" x="314" y="100"/><use href="#slot" x="362" y="100"/><use href="#slot" x="410" y="100"/>
+  <use href="#slot" x="26" y="148"/><use href="#slot" x="74" y="148"/><use href="#slot" x="122" y="148"/><use href="#slot" x="170" y="148"/><use href="#slot" x="218" y="148"/><use href="#slot" x="266" y="148"/><use href="#slot" x="314" y="148"/><use href="#slot" x="362" y="148"/><use href="#slot" x="410" y="148"/>
+  <use href="#slot" x="26" y="196"/><use href="#slot" x="74" y="196"/><use href="#slot" x="122" y="196"/><use href="#slot" x="170" y="196"/><use href="#slot" x="218" y="196"/><use href="#slot" x="266" y="196"/><use href="#slot" x="314" y="196"/><use href="#slot" x="362" y="196"/><use href="#slot" x="410" y="196"/>
+  <use href="#slot" x="26" y="244"/><use href="#slot" x="74" y="244"/><use href="#slot" x="122" y="244"/><use href="#slot" x="170" y="244"/><use href="#slot" x="218" y="244"/><use href="#slot" x="266" y="244"/><use href="#slot" x="314" y="244"/><use href="#slot" x="362" y="244"/><use href="#slot" x="410" y="244"/>
+
+  <!-- a few things for sale (simple icons) -->
+  <g> <!-- sword-ish blade -->
+    <rect x="36" y="60" width="7" height="22" rx="2" fill="#cfd3da" transform="rotate(45 40 71)"/>
+    <rect x="34" y="76" width="14" height="4" rx="2" fill="#a5652c" transform="rotate(45 41 78)"/>
+  </g>
+  <use href="#gem" x="84" y="60"/>
+  <g> <!-- metal bars x32 -->
+    <rect x="132" y="66" width="24" height="7" rx="3" fill="#ffd964"/>
+    <rect x="136" y="76" width="24" height="7" rx="3" fill="#eec44f"/>
+    <text x="162" y="92" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="end">32</text>
+  </g>
+  <g> <!-- pearl x16 -->
+    <circle cx="202" cy="72" r="10" fill="#1f6f68"/>
+    <circle cx="199" cy="69" r="3" fill="#5fd9cd"/>
+    <text x="210" y="92" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="end">16</text>
+  </g>
+  <g> <!-- green blocks x64 -->
+    <rect x="278" y="62" width="20" height="20" rx="3" fill="#4caf50"/>
+    <rect x="284" y="68" width="20" height="16" rx="3" fill="#3d8b40"/>
+    <text x="306" y="92" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="end">64</text>
+  </g>
+
+  <!-- cursor hovering the gold bars listing -->
+  <polygon points="150,80 150,100 155,95 159,103 163,101 159,93 166,93" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+
+  <!-- tooltip for that listing -->
+  <g>
+    <rect x="158" y="96" width="266" height="136" rx="6" fill="#160d24" opacity="0.97" stroke="#7a4fd0" stroke-width="2"/>
+    <text x="172" y="120" font-size="13" font-weight="bold" fill="#ffffff">Gold Ingot &#215;32</text>
+    <text x="172" y="141" font-size="12" fill="#aaaaaa">Price: <tspan fill="#55ff55">$2,500</tspan></text>
+    <text x="172" y="159" font-size="12" fill="#aaaaaa">Seller: <tspan fill="#ffffff">Colin</tspan></text>
+    <text x="172" y="177" font-size="12" fill="#aaaaaa">Ends in: <tspan fill="#ffffff">47h 12m</tspan></text>
+    <text x="172" y="201" font-size="12" fill="#ffe259">Click <tspan fill="#aaaaaa">to buy</tspan></text>
+    <text x="172" y="219" font-size="12" fill="#ffb830">Shift-Click <tspan fill="#aaaaaa">= quick buy (instant)</tspan></text>
+  </g>
+
+  <!-- bottom bar -->
+  <g> <!-- prev arrow -->
+    <use href="#slot" x="26" y="292"/>
+    <polygon points="58,300 42,314 58,328" fill="#ffe259"/>
+  </g>
+  <use href="#graypane" x="74" y="292"/>
+  <g> <!-- Your Listings chest -->
+    <use href="#slot" x="122" y="292"/>
+    <rect x="132" y="303" width="24" height="18" rx="2" fill="#a5652c"/>
+    <rect x="132" y="309" width="24" height="3" fill="#7d4a1e"/>
+    <rect x="141" y="307" width="6" height="7" rx="1" fill="#cfd3da"/>
+  </g>
+  <g> <!-- balance gold ingot -->
+    <use href="#slot" x="170" y="292"/>
+    <rect x="180" y="306" width="24" height="8" rx="3" fill="#ffd964"/>
+    <rect x="184" y="316" width="24" height="8" rx="3" fill="#eec44f"/>
+  </g>
+  <g> <!-- how-to paper -->
+    <use href="#slot" x="218" y="292"/>
+    <rect x="230" y="301" width="20" height="26" rx="2" fill="#e8e8e8"/>
+    <rect x="234" y="306" width="12" height="2.5" fill="#8b909c"/>
+    <rect x="234" y="311" width="12" height="2.5" fill="#8b909c"/>
+    <rect x="234" y="316" width="8" height="2.5" fill="#8b909c"/>
+  </g>
+  <g> <!-- sort hopper -->
+    <use href="#slot" x="266" y="292"/>
+    <polygon points="276,302 308,302 298,318 286,318" fill="#6f7480"/>
+    <rect x="288" y="318" width="8" height="8" fill="#5a5f6a"/>
+  </g>
+  <use href="#graypane" x="314" y="292"/>
+  <use href="#graypane" x="362" y="292"/>
+  <g> <!-- next arrow -->
+    <use href="#slot" x="410" y="292"/>
+    <polygon points="422,300 438,314 422,328" fill="#ffe259"/>
+  </g>
+</svg>

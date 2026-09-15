@@ -215,23 +215,24 @@ public class Guis implements Listener {
 
         ItemStack pane = item(Material.STAINED_GLASS_PANE, 7, "&7");
         for (int i = 45; i < 54; i++) inv.setItem(i, pane);
-        inv.setItem(48, item(Material.BOOK, 0, "&6How it works",
+        inv.setItem(49, item(Material.BOOK, 0, "&6How it works",
                 "&7Put items in the empty slots,",
-                "&7then press the green button.",
+                "&7then press the &agreen pane&7.",
                 "",
                 "&7Renamed or enchanted items",
                 "&7are never sold by accident.",
                 "&7Type &e/worth &7while holding an",
                 "&7item to see what it pays."));
-        inv.setItem(49, sellButton(0));
+        inv.setItem(53, sellButton(0));
 
         player.openInventory(inv);
     }
 
+    // The green pane in the bottom-right corner. Hovering it shows the total.
     private ItemStack sellButton(double total) {
-        return item(Material.WOOL, 5, "&a&lSELL ITEMS",
+        return item(Material.STAINED_GLASS_PANE, 5, "&a&lSELL EVERYTHING",
                 "&7You will get: &a" + plugin.getEconomy().format(total),
-                "", "&eClick to sell everything in here");
+                "", "&eClick to confirm and sell");
     }
 
     /** What one item stack pays in the /sell menu (0 = can't be sold). */
@@ -348,17 +349,17 @@ public class Guis implements Listener {
             int slot = event.getRawSlot();
             if (slot >= 45 && slot < 54) {
                 event.setCancelled(true);
-                if (slot == 49) {
+                if (slot == 53) {
                     sellContents(player, event.getInventory());
                 }
                 return;
             }
             // placing/taking items in the top grid or own inventory is fine —
-            // just refresh the total on the green button a moment later
+            // just refresh the total on the green pane a moment later
             final Inventory inv = event.getInventory();
             Bukkit.getScheduler().runTask(plugin, new Runnable() {
                 public void run() {
-                    inv.setItem(49, sellButton(sellTotal(inv)));
+                    inv.setItem(53, sellButton(sellTotal(inv)));
                 }
             });
         }
@@ -387,7 +388,7 @@ public class Guis implements Listener {
             final Inventory inv = event.getInventory();
             Bukkit.getScheduler().runTask(plugin, new Runnable() {
                 public void run() {
-                    inv.setItem(49, sellButton(sellTotal(inv)));
+                    inv.setItem(53, sellButton(sellTotal(inv)));
                 }
             });
         }

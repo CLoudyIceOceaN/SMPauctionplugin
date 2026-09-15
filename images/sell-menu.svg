@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="380" viewBox="0 0 500 380" font-family="Menlo, Consolas, monospace">
+  <defs>
+    <g id="slot">
+      <rect width="44" height="44" rx="3" fill="#26282e"/>
+      <rect x="2" y="2" width="40" height="40" rx="2" fill="#33363e"/>
+    </g>
+    <g id="graypane">
+      <rect width="44" height="44" rx="3" fill="#26282e"/>
+      <rect x="2" y="2" width="40" height="40" rx="2" fill="#33363e"/>
+      <rect x="10" y="10" width="24" height="24" rx="3" fill="#6f7480" opacity="0.85"/>
+      <rect x="14" y="14" width="16" height="16" rx="2" fill="#8b909c" opacity="0.6"/>
+    </g>
+  </defs>
+
+  <rect width="500" height="380" fill="#14161c"/>
+  <rect x="14" y="12" width="472" height="356" rx="10" fill="#3b3e46" stroke="#20222a" stroke-width="2"/>
+  <text x="28" y="40" font-size="15" font-weight="bold" fill="#e8e8e8">Sell Items</text>
+
+  <!-- 5 rows of item slots -->
+  <g id="grid">
+    <use href="#slot" x="26" y="52"/><use href="#slot" x="74" y="52"/><use href="#slot" x="122" y="52"/><use href="#slot" x="170" y="52"/><use href="#slot" x="218" y="52"/><use href="#slot" x="266" y="52"/><use href="#slot" x="314" y="52"/><use href="#slot" x="362" y="52"/><use href="#slot" x="410" y="52"/>
+    <use href="#slot" x="26" y="100"/><use href="#slot" x="74" y="100"/><use href="#slot" x="122" y="100"/><use href="#slot" x="170" y="100"/><use href="#slot" x="218" y="100"/><use href="#slot" x="266" y="100"/><use href="#slot" x="314" y="100"/><use href="#slot" x="362" y="100"/><use href="#slot" x="410" y="100"/>
+    <use href="#slot" x="26" y="148"/><use href="#slot" x="74" y="148"/><use href="#slot" x="122" y="148"/><use href="#slot" x="170" y="148"/><use href="#slot" x="218" y="148"/><use href="#slot" x="266" y="148"/><use href="#slot" x="314" y="148"/><use href="#slot" x="362" y="148"/><use href="#slot" x="410" y="148"/>
+    <use href="#slot" x="26" y="196"/><use href="#slot" x="74" y="196"/><use href="#slot" x="122" y="196"/><use href="#slot" x="170" y="196"/><use href="#slot" x="218" y="196"/><use href="#slot" x="266" y="196"/><use href="#slot" x="314" y="196"/><use href="#slot" x="362" y="196"/><use href="#slot" x="410" y="196"/>
+    <use href="#slot" x="26" y="244"/><use href="#slot" x="74" y="244"/><use href="#slot" x="122" y="244"/><use href="#slot" x="170" y="244"/><use href="#slot" x="218" y="244"/><use href="#slot" x="266" y="244"/><use href="#slot" x="314" y="244"/><use href="#slot" x="362" y="244"/><use href="#slot" x="410" y="244"/>
+  </g>
+
+  <!-- some items the player dropped in (simple icons) -->
+  <g> <!-- crops: green stalks x64 -->
+    <rect x="38" y="62" width="6" height="24" rx="2" fill="#4caf50"/>
+    <rect x="47" y="58" width="6" height="28" rx="2" fill="#5cbf60"/>
+    <rect x="56" y="64" width="6" height="22" rx="2" fill="#43a047"/>
+    <text x="66" y="92" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="end">64</text>
+  </g>
+  <g> <!-- gem x3 -->
+    <polygon points="96,66 106,60 116,66 106,84" fill="#4dd7e6" stroke="#2ba6b5" stroke-width="1.5"/>
+    <text x="114" y="92" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="end">3</text>
+  </g>
+  <g> <!-- metal bars x20 -->
+    <rect x="132" y="66" width="24" height="7" rx="3" fill="#cfd3da"/>
+    <rect x="136" y="76" width="24" height="7" rx="3" fill="#b8bcc4"/>
+    <text x="162" y="92" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="end">20</text>
+  </g>
+  <g> <!-- veggie x17 -->
+    <ellipse cx="202" cy="72" rx="12" ry="9" fill="#c9a35a"/>
+    <circle cx="198" cy="70" r="1.5" fill="#8f6f33"/>
+    <circle cx="207" cy="75" r="1.5" fill="#8f6f33"/>
+    <text x="210" y="92" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="end">17</text>
+  </g>
+
+  <!-- bottom bar: gray panes, book in middle, GREEN PANE bottom right -->
+  <use href="#graypane" x="26" y="292"/><use href="#graypane" x="74" y="292"/><use href="#graypane" x="122" y="292"/><use href="#graypane" x="170" y="292"/><use href="#graypane" x="266" y="292"/><use href="#graypane" x="314" y="292"/><use href="#graypane" x="362" y="292"/>
+  <g> <!-- info book, slot 49 -->
+    <use href="#slot" x="218" y="292"/>
+    <rect x="230" y="302" width="20" height="24" rx="2" fill="#a5652c"/>
+    <rect x="234" y="306" width="12" height="2.5" fill="#e8d9b8"/>
+    <rect x="234" y="311" width="12" height="2.5" fill="#e8d9b8"/>
+    <rect x="234" y="316" width="12" height="2.5" fill="#e8d9b8"/>
+  </g>
+  <g> <!-- THE GREEN PANE, slot 53 (bottom right) -->
+    <rect x="410" y="292" width="44" height="44" rx="3" fill="#1d4d26"/>
+    <rect x="412" y="294" width="40" height="40" rx="2" fill="#2e7d32"/>
+    <rect x="420" y="302" width="24" height="24" rx="3" fill="#66e070" opacity="0.9"/>
+    <rect x="424" y="306" width="16" height="16" rx="2" fill="#9dffa5" opacity="0.7"/>
+  </g>
+
+  <!-- mouse cursor hovering the green pane -->
+  <polygon points="436,318 436,338 441,333 445,341 449,339 445,331 452,331" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+
+  <!-- the hover tooltip -->
+  <g>
+    <rect x="212" y="180" width="240" height="92" rx="6" fill="#160d24" opacity="0.97" stroke="#7a4fd0" stroke-width="2"/>
+    <text x="226" y="205" font-size="13" font-weight="bold" fill="#55ff55">SELL EVERYTHING</text>
+    <text x="226" y="226" font-size="12" fill="#aaaaaa">You will get: <tspan fill="#55ff55">$4,250</tspan></text>
+    <text x="226" y="256" font-size="12" fill="#ffe259">Click to confirm and sell</text>
+  </g>
+</svg>

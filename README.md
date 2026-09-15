@@ -31,6 +31,14 @@ have it yet) into your `plugins` folder. Then **restart the server**.
 3. Restart the server.
 </details>
 
+## What the menus look like
+
+*(mockups — in game it's drawn with real Minecraft item textures)*
+
+| The auction house | The sell menu |
+|---|---|
+| ![Auction house](images/auction-house.svg) | ![Sell menu](images/sell-menu.svg) |
+
 ## The auction house — `/ah`
 
 | Type this | What happens |
@@ -51,8 +59,9 @@ Sellers get paid instantly, even if they're offline.
 
 ## The sell menu — `/sell`
 
-`/sell` opens a menu. Drop your farm loot in, and the green button shows
-how much you'll get — press it and the money is yours. Items it can't
+`/sell` opens a menu. Drop your farm loot in, then hover the **green
+glass pane in the bottom-right corner** — it shows exactly how much
+you'll get. Click it to confirm and sell everything. Items it can't
 sell (and anything renamed or enchanted) are given back, never eaten.
 
 `/worth` (while holding an item) tells you what it pays.
