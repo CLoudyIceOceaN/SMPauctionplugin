@@ -44,16 +44,25 @@ have it yet) into your `plugins` folder. Then **restart the server**.
 | Type this | What happens |
 |---|---|
 | `/ah` | Opens the auction house menu |
+| `/ah diamond` | Searches the auction house for diamonds (cheapest first) |
 | `/ah sell 5k` | Puts the item in your hand up for sale for $5,000 |
 
-In the menu:
+Buying:
 - **Click** an item → a confirm screen pops up (green = buy, red = cancel)
-- **Shift-click** an item → **quick buy**, bought instantly, no confirm
-- **Arrows** at the bottom flip pages
-- **Hopper** changes sorting: newest / cheapest / priciest
-- **Chest** = *Your Listings*: click your item to take it off sale, and
-  claim back anything that expired (items stay for sale for 48 hours)
-- Your **balance** shows on the gold ingot
+- **Shift-click** an item → bought **instantly**, no confirm screen
+
+The bottom bar (left to right):
+- **Hopper** — sort: newest / cheapest / priciest
+- **Ender chest** — **Quick Buy**: every item type for sale in one menu,
+  with how many there are and the cheapest price. Click one to see all
+  of them, cheapest first — perfect for grabbing the best deal fast
+- **Anvil** — refresh, loads the newest auctions
+- **Sign** — search (it tells you to type `/ah <item name>`; when a
+  search is on, click the sign again to clear it)
+- **Chest** — *Your Items*: take things off sale, claim back anything
+  expired or cancelled (items stay for sale for 48 hours)
+- **Arrow** (bottom right) — next page (a back arrow appears next to it
+  when you're past page 1)
 
 Sellers get paid instantly, even if they're offline.
 

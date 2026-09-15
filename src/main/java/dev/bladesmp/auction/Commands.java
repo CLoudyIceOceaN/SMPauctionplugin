@@ -61,7 +61,14 @@ public class Commands implements CommandExecutor {
                 listItem(player, args[1]);
                 return true;
             }
-            plugin.getGuis().openAh(player, 0, Listings.SORT_NEWEST);
+            // /ah <item> — search the auction house, cheapest first
+            StringBuilder search = new StringBuilder();
+            for (String arg : args) {
+                if (search.length() > 0) search.append(' ');
+                search.append(arg);
+            }
+            plugin.getGuis().openAh(player, 0, Listings.SORT_CHEAP,
+                    search.toString(), null);
             return true;
         }
         return true;

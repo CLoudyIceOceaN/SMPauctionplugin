@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -38,13 +39,24 @@ public class Guis implements Listener {
     // ===== holders: how we recognise our own menus when someone clicks =====
 
     private static class AhHolder implements InventoryHolder {
-        int page; int sort; Inventory inv;
+        int page; int sort;
+        String search;        // /ah <item> search, or null
+        Material filter;      // quick-buy item filter, or null
+        Inventory inv;
         Map<Integer, UUID> slots = new HashMap<Integer, UUID>();
         public Inventory getInventory() { return inv; }
     }
 
     private static class ConfirmHolder implements InventoryHolder {
         UUID listingId; Inventory inv;
+        // so cancel / after buying brings you back to the same view
+        int page; int sort; String search; Material filter;
+        public Inventory getInventory() { return inv; }
+    }
+
+    private static class QuickHolder implements InventoryHolder {
+        Inventory inv;
+        Map<Integer, Material> slots = new HashMap<Integer, Material>();
         public Inventory getInventory() { return inv; }
     }
 
@@ -63,7 +75,11 @@ public class Guis implements Listener {
     // ===== the auction house =====
 
     public void openAh(Player player, int page, int sort) {
-        List<Listing> all = plugin.getListings().sorted(sort);
+        openAh(player, page, sort, null, null);
+    }
+
+    public void openAh(Player player, int page, int sort, String search, Material filter) {
+        List<Listing> all = visible(sort, search, filter);
         int pages = Math.max(1, (all.size() + 44) / 45);
         if (page >= pages) page = pages - 1;
         if (page < 0) page = 0;
@@ -71,10 +87,14 @@ public class Guis implements Listener {
         AhHolder holder = new AhHolder();
         holder.page = page;
         holder.sort = sort;
+        holder.search = search;
+        holder.filter = filter;
         String title = plugin.color(plugin.getConfig()
                 .getString("gui.ah-title", "&8Auction House"));
-        if (pages > 1) title = trim(title + " (" + (page + 1) + "/" + pages + ")");
-        Inventory inv = Bukkit.createInventory(holder, 54, title);
+        if (filter != null) title = plugin.color("&8Quick Buy: &0") + prettyName(filter);
+        else if (search != null) title = plugin.color("&8Search: &0") + search;
+        if (pages > 1) title = title + " (" + (page + 1) + "/" + pages + ")";
+        Inventory inv = Bukkit.createInventory(holder, 54, trim(title));
         holder.inv = inv;
 
         int start = page * 45;
@@ -84,27 +104,124 @@ public class Guis implements Listener {
             holder.slots.put(i, l.id);
         }
         if (all.isEmpty()) {
+            if (search != null || filter != null) {
+                inv.setItem(22, item(Material.BARRIER, 0, "&cNothing found!",
+                        "&7Nobody is selling that right now.",
+                        "&7Click the sign to go back."));
+            } else {
+                inv.setItem(22, item(Material.BARRIER, 0, "&cNothing for sale yet!",
+                        "&7Hold an item and type", "&e/ah sell <price>"));
+            }
+        }
+
+        // ===== bottom bar (DonutSMP layout) =====
+        // 45,46 spaces | 47 hopper sort | 48 ender chest quick buy
+        // 49 anvil refresh | 50 sign search | 51 chest your stuff
+        // 52 space/back arrow | 53 next page arrow
+        ItemStack pane = item(Material.STAINED_GLASS_PANE, 7, "&7");
+        for (int i = 45; i < 54; i++) inv.setItem(i, pane);
+        inv.setItem(47, item(Material.HOPPER, 0, "&bSort: &f" + sortName(sort),
+                "&7Click to change the order"));
+        inv.setItem(48, item(Material.ENDER_CHEST, 0, "&d&lQuick Buy",
+                "&7Browse everything for sale",
+                "&7by item — cheapest first!",
+                "", "&eClick &7to open"));
+        inv.setItem(49, item(Material.ANVIL, 0, "&6Refresh",
+                "&7Click to load the newest auctions"));
+        if (search != null || filter != null) {
+            inv.setItem(50, item(Material.SIGN, 0, "&eSearching: &f"
+                            + (filter != null ? prettyName(filter) : search),
+                    "&cClick to clear and see everything"));
+        } else {
+            inv.setItem(50, item(Material.SIGN, 0, "&eSearch",
+                    "&7Close this menu and type:", "&f/ah <item name>",
+                    "", "&7Example: &f/ah diamond"));
+        }
+        int claimCount = plugin.getListings().claimsFor(player.getUniqueId()).size();
+        inv.setItem(51, item(Material.CHEST, 0, "&eYour Items",
+                "&7For sale: &f" + plugin.getListings().countFor(player.getUniqueId()),
+                "&7To claim: &f" + claimCount,
+                "", "&eClick &7to manage or list items",
+                "&7(list with &f/ah sell <price>&7)"));
+        if (page > 0) inv.setItem(52, item(Material.ARROW, 0, "&e◀ Previous Page",
+                "&7Page " + page + " of " + pages));
+        if (page < pages - 1) inv.setItem(53, item(Material.ARROW, 0, "&eNext Page ▶",
+                "&7Page " + (page + 2) + " of " + pages));
+
+        player.openInventory(inv);
+    }
+
+    /** The listings that match the current search or quick-buy filter. */
+    private List<Listing> visible(int sort, String search, Material filter) {
+        List<Listing> all = plugin.getListings().sorted(sort);
+        if (search == null && filter == null) return all;
+        List<Listing> out = new ArrayList<Listing>();
+        for (Listing l : all) {
+            if (filter != null && l.item.getType() != filter) continue;
+            if (search != null) {
+                String hay = (plugin.itemName(l.item) + " "
+                        + l.item.getType().name().replace('_', ' ')).toLowerCase();
+                if (!hay.contains(search.toLowerCase())) continue;
+            }
+            out.add(l);
+        }
+        return out;
+    }
+
+    private String prettyName(Material material) {
+        String raw = material.name().toLowerCase().replace('_', ' ');
+        StringBuilder pretty = new StringBuilder();
+        for (String word : raw.split(" ")) {
+            if (word.isEmpty()) continue;
+            pretty.append(Character.toUpperCase(word.charAt(0)))
+                  .append(word.substring(1)).append(' ');
+        }
+        return pretty.toString().trim();
+    }
+
+    // ===== quick buy: every item type for sale, cheapest first =====
+
+    public void openQuick(Player player) {
+        QuickHolder holder = new QuickHolder();
+        Inventory inv = Bukkit.createInventory(holder, 54, plugin.color(
+                plugin.getConfig().getString("gui.quick-title", "&8Quick Buy")));
+        holder.inv = inv;
+
+        // count listings + find the cheapest price for each item type
+        Map<Material, Integer> counts = new LinkedHashMap<Material, Integer>();
+        Map<Material, Double> cheapest = new HashMap<Material, Double>();
+        for (Listing l : plugin.getListings().sorted(Listings.SORT_CHEAP)) {
+            Material type = l.item.getType();
+            Integer c = counts.get(type);
+            counts.put(type, c == null ? 1 : c + 1);
+            if (!cheapest.containsKey(type)) cheapest.put(type, l.price);
+        }
+
+        int slot = 0;
+        for (Map.Entry<Material, Integer> entry : counts.entrySet()) {
+            if (slot >= 45) break;
+            Material type = entry.getKey();
+            ItemStack icon = new ItemStack(type, 1);
+            ItemMeta meta = icon.getItemMeta();
+            meta.setDisplayName(plugin.color("&e" + prettyName(type)));
+            meta.setLore(Arrays.asList(
+                    plugin.color("&7For sale: &f" + entry.getValue()),
+                    plugin.color("&7Cheapest: &a" + plugin.getEconomy().format(cheapest.get(type))),
+                    "",
+                    plugin.color("&eClick &7to see them, cheapest first")));
+            icon.setItemMeta(meta);
+            inv.setItem(slot, icon);
+            holder.slots.put(slot, type);
+            slot++;
+        }
+        if (slot == 0) {
             inv.setItem(22, item(Material.BARRIER, 0, "&cNothing for sale yet!",
                     "&7Hold an item and type", "&e/ah sell <price>"));
         }
 
-        // bottom bar
         ItemStack pane = item(Material.STAINED_GLASS_PANE, 7, "&7");
         for (int i = 45; i < 54; i++) inv.setItem(i, pane);
-        if (page > 0) inv.setItem(45, item(Material.ARROW, 0, "&e◀ Previous Page"));
-        int claimCount = plugin.getListings().claimsFor(player.getUniqueId()).size();
-        inv.setItem(47, item(Material.CHEST, 0, "&eYour Listings",
-                "&7For sale: &f" + plugin.getListings().countFor(player.getUniqueId()),
-                "&7To claim: &f" + claimCount,
-                "", "&eClick &7to manage them"));
-        inv.setItem(48, item(Material.GOLD_INGOT, 0, "&aYour Balance",
-                "&f" + plugin.getEconomy().format(plugin.getEconomy().get(player))));
-        inv.setItem(49, item(Material.PAPER, 0, "&6How to sell",
-                "&7Hold an item, then type:", "&e/ah sell <price>",
-                "", "&7Example: &f/ah sell 5k"));
-        inv.setItem(50, item(Material.HOPPER, 0, "&bSort: " + sortName(sort),
-                "&7Click to change"));
-        if (page < pages - 1) inv.setItem(53, item(Material.ARROW, 0, "&eNext Page ▶"));
+        inv.setItem(49, item(Material.ARROW, 0, "&e◀ Back to Auction House"));
 
         player.openInventory(inv);
     }
@@ -127,7 +244,7 @@ public class Guis implements Listener {
         lore.add(plugin.color("&7Ends in: &f" + timeLeft(l.expires)));
         lore.add("");
         lore.add(plugin.color("&eClick &7to buy"));
-        lore.add(plugin.color("&6Shift-Click &7= quick buy (instant)"));
+        lore.add(plugin.color("&6Shift-Click &7= buy instantly"));
         meta.setLore(lore);
         show.setItemMeta(meta);
         return show;
@@ -135,9 +252,15 @@ public class Guis implements Listener {
 
     // ===== confirm screen =====
 
-    public void openConfirm(Player player, Listing l) {
+    public void openConfirm(Player player, Listing l, AhHolder from) {
         ConfirmHolder holder = new ConfirmHolder();
         holder.listingId = l.id;
+        if (from != null) {
+            holder.page = from.page;
+            holder.sort = from.sort;
+            holder.search = from.search;
+            holder.filter = from.filter;
+        }
         Inventory inv = Bukkit.createInventory(holder, 27, plugin.color(
                 plugin.getConfig().getString("gui.confirm-title", "&8Confirm Purchase")));
         holder.inv = inv;
@@ -272,24 +395,51 @@ public class Guis implements Listener {
                 Listing l = plugin.getListings().get(id);
                 if (l == null) { // someone else bought it first
                     player.sendMessage(plugin.msg("already-sold"));
-                    openAh(player, ah.page, ah.sort);
+                    openAh(player, ah.page, ah.sort, ah.search, ah.filter);
                     return;
                 }
                 if (event.isShiftClick()) {
-                    buy(player, id); // quick buy!
+                    buy(player, id, ah.page, ah.sort, ah.search, ah.filter); // instant!
                 } else {
-                    openConfirm(player, l);
+                    openConfirm(player, l, ah);
                 }
-            } else if (slot == 45 && event.getCurrentItem() != null
+            } else if (slot == 47) { // hopper: sort
+                openAh(player, 0, (ah.sort + 1) % 3, ah.search, ah.filter);
+            } else if (slot == 48) { // ender chest: quick buy
+                openQuick(player);
+            } else if (slot == 49) { // anvil: refresh
+                openAh(player, ah.page, ah.sort, ah.search, ah.filter);
+            } else if (slot == 50) { // sign: search
+                if (ah.search != null || ah.filter != null) {
+                    openAh(player, 0, ah.sort, null, null); // clear the search
+                } else {
+                    player.closeInventory();
+                    player.sendMessage(plugin.msg("search-hint"));
+                }
+            } else if (slot == 51) { // chest: your items
+                openMine(player);
+            } else if (slot == 52 && event.getCurrentItem() != null
                     && event.getCurrentItem().getType() == Material.ARROW) {
-                openAh(player, ah.page - 1, ah.sort);
+                openAh(player, ah.page - 1, ah.sort, ah.search, ah.filter);
             } else if (slot == 53 && event.getCurrentItem() != null
                     && event.getCurrentItem().getType() == Material.ARROW) {
-                openAh(player, ah.page + 1, ah.sort);
-            } else if (slot == 47) {
-                openMine(player);
-            } else if (slot == 50) {
-                openAh(player, 0, (ah.sort + 1) % 3);
+                openAh(player, ah.page + 1, ah.sort, ah.search, ah.filter);
+            }
+            return;
+        }
+
+        if (holder instanceof QuickHolder) {
+            event.setCancelled(true);
+            QuickHolder quick = (QuickHolder) holder;
+            int slot = event.getRawSlot();
+            if (slot == 49) {
+                openAh(player, 0, Listings.SORT_NEWEST);
+                return;
+            }
+            Material type = quick.slots.get(slot);
+            if (type != null) {
+                // show just this item, cheapest first
+                openAh(player, 0, Listings.SORT_CHEAP, null, type);
             }
             return;
         }
@@ -299,9 +449,10 @@ public class Guis implements Listener {
             ConfirmHolder confirm = (ConfirmHolder) holder;
             int slot = event.getRawSlot();
             if (slot == 11) {
-                buy(player, confirm.listingId);
+                buy(player, confirm.listingId, confirm.page, confirm.sort,
+                        confirm.search, confirm.filter);
             } else if (slot == 15) {
-                openAh(player, 0, Listings.SORT_NEWEST);
+                openAh(player, confirm.page, confirm.sort, confirm.search, confirm.filter);
             }
             return;
         }
@@ -369,7 +520,7 @@ public class Guis implements Listener {
     public void onDrag(InventoryDragEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
         boolean ours = holder instanceof AhHolder || holder instanceof ConfirmHolder
-                || holder instanceof MineHolder;
+                || holder instanceof MineHolder || holder instanceof QuickHolder;
         boolean touchesTop = false;
         for (int raw : event.getRawSlots()) {
             if (raw < event.getInventory().getSize()) touchesTop = true;
@@ -436,12 +587,13 @@ public class Guis implements Listener {
         player.closeInventory(); // returns whatever could not be sold
     }
 
-    /** The actual purchase — used by quick buy and the confirm button. */
-    private void buy(Player buyer, UUID listingId) {
+    /** The actual purchase — used by instant buy and the confirm button. */
+    private void buy(Player buyer, UUID listingId, int page, int sort,
+                     String search, Material filter) {
         Listing l = plugin.getListings().get(listingId);
         if (l == null) {
             buyer.sendMessage(plugin.msg("already-sold"));
-            openAh(buyer, 0, Listings.SORT_NEWEST);
+            openAh(buyer, page, sort, search, filter);
             return;
         }
         if (l.seller.equals(buyer.getUniqueId())) {
@@ -475,7 +627,8 @@ public class Guis implements Listener {
                     .replace("%player%", buyer.getName()));
             plugin.sound(seller, Sound.ORB_PICKUP);
         }
-        openAh(buyer, 0, Listings.SORT_NEWEST);
+        // back to the same page / search / quick-buy view they were on
+        openAh(buyer, page, sort, search, filter);
     }
 
     // ===== little helpers =====

@@ -7,8 +7,8 @@ depend: [SMPmoneyplugin]
 
 commands:
   ah:
-    description: Open the auction house, or sell the item in your hand
-    usage: /ah [sell <price>]
+    description: Open the auction house, search it, or sell the item in your hand
+    usage: /ah [item to search | sell <price>]
     aliases: [auctionhouse, auctions, auction]
   sell:
     description: Open the sell menu
